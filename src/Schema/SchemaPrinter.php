@@ -4,45 +4,17 @@ declare(strict_types=1);
 
 namespace Awardis\Federation\Schema;
 
-use GraphQL\Error\Error;
-use GraphQL\Language\AST\ArgumentNode;
-use GraphQL\Language\AST\DirectiveNode;
 use GraphQL\Language\AST\FieldDefinitionNode;
 use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
-use GraphQL\Language\AST\ListValueNode;
 use GraphQL\Language\AST\NodeList;
 use GraphQL\Language\AST\ObjectTypeDefinitionNode;
-use GraphQL\Language\AST\ValueNode;
 use GraphQL\Language\Printer;
 use GraphQL\Type\Definition\Directive;
-use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\FieldDefinition;
-use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
-use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Type\Definition\Type;
-use GraphQL\Type\Definition\UnionType;
-use GraphQL\Type\Introspection;
 use GraphQL\Type\Schema;
-use GraphQL\Utils\AST;
-use GraphQL\Utils\Utils;
-use function array_filter;
-use function array_keys;
-use function array_map;
-use function array_merge;
-use function array_values;
-use function count;
-use function explode;
-use function implode;
-use function ksort;
-use function mb_strlen;
-use function preg_match_all;
-use function sprintf;
-use function str_replace;
-use function strlen;
-use function substr;
 
 /**
  * Given an instance of Schema, prints it in GraphQL type language.
