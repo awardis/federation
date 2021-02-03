@@ -1,0 +1,132 @@
+From 0c50d47c603f3a4b1ed77aeb57ba402055b379c0 Mon Sep 17 00:00:00 2001
+From: Tommy <ts@awardis.de>
+Date: Wed, 6 Jan 2021 13:32:17 +0100
+Subject: [PATCH] Include AST nodes
+
+---
+ src/Schema/Factories/FieldFactory.php |  1 +
+ src/Schema/TypeRegistry.php           | 33 +++++++++++++++++----------
+ 2 files changed, 22 insertions(+), 12 deletions(-)
+
+diff --git a/src/Schema/Factories/FieldFactory.php b/src/Schema/Factories/FieldFactory.php
+index df36dff..d733a52 100644
+--- a/src/Schema/Factories/FieldFactory.php
++++ b/src/Schema/Factories/FieldFactory.php
+@@ -97,6 +97,7 @@ class FieldFactory
+         return [
+             'name' => $fieldDefinitionNode->name->value,
+             'type' => $fieldValue->getReturnType(),
++            'astNode' => $fieldValue->getField(),
+             'args' => $this->argumentFactory->toTypeMap(
+                 $fieldValue->getField()->arguments
+             ),
+diff --git a/src/Schema/TypeRegistry.php b/src/Schema/TypeRegistry.php
+index b13620e..eed89c3 100644
+--- a/src/Schema/TypeRegistry.php
++++ b/src/Schema/TypeRegistry.php
+@@ -266,6 +266,7 @@ EOL
+             'name' => $enumDefinition->name->value,
+             'description' => data_get($enumDefinition->description, 'value'),
+             'values' => $values,
++            'astNode' => $enumDefinition,
+         ]);
+     }
+ 
+@@ -299,6 +300,7 @@ EOL
+         return new $className([
+             'name' => $scalarName,
+             'description' => data_get($scalarDefinition->description, 'value'),
++            'astNode' => $scalarDefinition,
+         ]);
+     }
+ 
+@@ -308,10 +310,11 @@ EOL
+             'name' => $objectDefinition->name->value,
+             'description' => data_get($objectDefinition->description, 'value'),
+             'fields' => $this->makeFieldsLoader($objectDefinition),
++            'astNode' => $objectDefinition,
+             'interfaces' =>
+-                /**
+-                 * @return array<\GraphQL\Type\Definition\Type>
+-                 */
++            /**
++             * @return array<\GraphQL\Type\Definition\Type>
++             */
+                 function () use ($objectDefinition): array {
+                     $interfaces = [];
+ 
+@@ -361,9 +364,9 @@ EOL
+             'description' => data_get($inputDefinition->description, 'value'),
+             'astNode' => $inputDefinition,
+             'fields' =>
+-                /**
+-                 * @return array<string, array<string, mixed>>
+-                 */
++            /**
++             * @return array<string, array<string, mixed>>
++             */
+                 function () use ($inputDefinition): array {
+                     // @phpstan-ignore-next-line graphql-php types are unnecessarily nullable
+                     return $this->argumentFactory->toTypeMap($inputDefinition->fields);
+@@ -385,7 +388,7 @@ EOL
+                     $nodeName,
+                     (array) config('lighthouse.namespaces.interfaces')
+                 )
+-                ?: $this->typeResolverFallback();
++                    ?: $this->typeResolverFallback();
+         }
+ 
+         return new InterfaceType([
+@@ -393,6 +396,7 @@ EOL
+             'description' => data_get($interfaceDefinition->description, 'value'),
+             'fields' => $this->makeFieldsLoader($interfaceDefinition),
+             'resolveType' => $typeResolver,
++            'astNode' => $interfaceDefinition,
+         ]);
+     }
+ 
+@@ -427,7 +431,11 @@ EOL
+     protected function typeResolverFallback(): Closure
+     {
+         return function ($rootValue): Type {
+-            return $this->get(class_basename($rootValue));
++            return $this->get(
++                is_array($rootValue)
++                    ? ($rootValue['__typename'] ?? '')
++                    : class_basename($rootValue)
++            );
+         };
+     }
+ 
+@@ -445,16 +453,16 @@ EOL
+                     $nodeName,
+                     (array) config('lighthouse.namespaces.unions')
+                 )
+-                ?: $this->typeResolverFallback();
++                    ?: $this->typeResolverFallback();
+         }
+ 
+         return new UnionType([
+             'name' => $nodeName,
+             'description' => data_get($unionDefinition->description, 'value'),
+             'types' =>
+-                /**
+-                 * @return array<\GraphQL\Type\Definition\Type>
+-                 */
++            /**
++             * @return array<\GraphQL\Type\Definition\Type>
++             */
+                 function () use ($unionDefinition): array {
+                     $types = [];
+ 
+@@ -467,6 +475,7 @@ EOL
+                     return $types;
+                 },
+             'resolveType' => $typeResolver,
++            'astNode' => $unionDefinition,
+         ]);
+     }
+ }
+-- 
+2.24.3 (Apple Git-128)
+

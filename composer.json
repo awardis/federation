@@ -1,0 +1,32 @@
+{
+    "name": "awardis/federation",
+    "version": "0.1-beta",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Tommy",
+            "email": "ts@awardis.de"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Awardis\\Federation\\": "src/"
+        }
+    },
+    "require": {
+        "nuwave/lighthouse": "^5.2",
+        "cweagans/composer-patches": "~1.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Awardis\\Federation\\FederationServiceProvider"
+            ]
+        },
+        "patches": {
+            "nuwave/lighthouse": {
+                "Register AST nodes": "https://static.files.award.is/patches/001-include-ast-nodes.patch"
+            }
+        }
+    }
+}
