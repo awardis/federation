@@ -1,3 +1,7 @@
+**Federation is now supported by Lighthouse. Please reference the [official docs](https://lighthouse-php.com/5/federation/getting-started.html).**
+
+---
+
 # [WIP] [Apollo Federation](https://www.apollographql.com/docs/federation/) service support for [Lighthouse](https://github.com/nuwave/lighthouse).
 
 **Please note that we strongly advice to not use this in any production environment but rather wait for this feature to eventually become part of Lighthouse core. You can find the ongoing discussion [here](https://github.com/nuwave/lighthouse/issues/911).**
